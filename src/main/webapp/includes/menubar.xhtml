@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+     <ul class="nav navbar-nav">
+        <li>
+            <p:link outcome="/index" onclick="clearBreadCrumbs()">
+                <i class="fa fa-home"></i>
+                <span>Home</span>
+            </p:link>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cars <span
+                    class="caret"></span>
+                <i class="fa fa-car"></i>
+            </a>
+
+            <ul class="dropdown-menu" role="menu">
+                <li>
+                    <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/car_form.xhtml')) }" outcome="/car_list">
+                        <span>List</span>
+                        <i class="fa fa-th-list"></i>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/car_form.xhtml')) }" outcome="/car_form">
+                        <span>New</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </p:link>
+                </li>
+
+
+            </ul>
+
+        </li>
+         
+         <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Permission <span
+                    class="caret"></span>
+                <i class="fa fa-car"></i>
+            </a>
+
+            <ul class="dropdown-menu" role="menu">
+                <li>
+                    <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/managePermission_page/permission_list.xhtml')) }" outcome="/managePermission_page/permission_list">
+                        <span>List</span>
+                        <i class="fa fa-th-list"></i>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/managePermission_page/permission_form.xhtml')) }" outcome="/managePermission_page/permission_form">
+                        <span>New</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </p:link>
+                </li>
+
+            </ul>
+
+        </li>
+         
+         
+          <li class="dropdown" >
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" >Role <span
+                    class="caret"></span>
+                <i class="fa fa-car"></i>
+            </a>
+
+            <ul class="dropdown-menu" role="menu">
+                <li>
+                    <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/manageRole_page/role_list.xhtml')) }" outcome="/manageRole_page/role_list">
+                        <span>List</span>
+                        <i class="fa fa-th-list"></i>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/manageRole_page/role_form.xhtml')) }" outcome="/manageRole_page/role_form">
+                        <span>New</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </p:link>
+                </li>
+
+
+            </ul>
+
+        </li>
+         
+         <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Users <span
+                    class="caret"></span>
+                <i class="fa fa-car"></i>
+            </a>
+
+            <ul class="dropdown-menu" role="menu">
+                <li>
+                    <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/manageUser_page/user_list.xhtml')) }" outcome="/manageUser_page/user_list">
+                        <span>List</span>
+                        <i class="fa fa-th-list"></i>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/manageUser_page/user_form.xhtml')) }" outcome="/manageUser_page/user_form">
+                        <span>New</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </p:link>
+                </li>
+
+
+            </ul>
+
+        </li>
+    </ul>
+
+</ui:composition>

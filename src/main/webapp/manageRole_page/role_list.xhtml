@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="#{layoutMB.template}">
+    
+    <ui:define name="metadata">
+        <ui:param name="title" value="Role listing"/> <!-- Automatic create breadCrumb and page title when param 'title' is provided. --> 
+        
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .ui-widget-content .ui-datatable-even{
+                background: #ffffcc;
+            }
+
+            .ui-widget-content .ui-datatable-odd{
+                background: #ccffff;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="description">
+        Find Role
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs">
+                        <p:commandButton action="/manageRole_page/role_form?faces-redirect=true" icon="fa fa-plus"
+                                         value="New" styleClass="btn-primary"/>
+                        <p:spacer width="5"/>
+                        <p:commandButton value="Delete Selected" icon="fa fa-trash" styleClass="btn-danger"
+                                         action="#{roleListMB.delete}"
+                                         disabled="#{empty roleListMB.selectedRoles or roleListMB.selectedRoles.size() == 0}"
+                                         process="@this" update="@form"
+                                         >
+                            <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-danger"/>
+                        </p:commandButton>
+                        <p:spacer width="5"/>
+                        <p:commandButton value="View selected" update="@(.ui-dialog)" styleClass="btn-info"
+                                         disabled="#{empty roleListMB.selectedRoles or roleListMB.selectedRoles.size() == 0}"
+                                         oncomplete="PF('selectedRoles').show()" icon="fa fa-search"/>
+                    </div>
+
+                    <p:splitButton value="New" action="/manageRole_page/role_form?faces-redirect=true"
+                                   icon="fa fa-plus"
+                                   styleClass="hidden-md hidden-lg btn-primary">
+                        <p:menuitem value="Delete Selected" action="#{roleListMB.delete}"
+                                    process="@this" update="@form"
+                                    disabled="#{empty roleListMB.selectedRoles or roleListMB.selectedRoles.size() == 0}"
+                                    icon="fa fa-trash">
+                            <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-danger"/>
+                        </p:menuitem>
+                        <p:menuitem value="View selected" update="@(.ui-dialog)"
+                                    oncomplete="PF('selectedRoles').show()"
+                                    disabled="#{empty roleListMB.selectedRoles or roleListMB.selectedRoles.size() == 0}"
+                                    icon="fa fa-search"
+                                    />
+                    </p:splitButton>
+
+                    <p:separator/>
+                    <p:dataTable widgetVar="rolesTable" var="c" value="#{roleListMB.roles}" rows="5"
+                                 rowKey="#{c.id}" lazy="true" paginator="true"
+                                 filteredValue="#{roleListMB.filteredValue}"
+                                 paginatorPosition="bottom" selection="#{roleListMB.selectedRoles}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {JumpToPageDropdown}"
+                                 currentPageReportTemplate="[ {startRecord} to {endRecord} of {totalRecords} ]"
+                                 rowsPerPageTemplate="5,10,15,20,30"
+                                 >
+
+                        <p:ajax event="rowSelectCheckbox" update="@(.ui-button, .ui-confirm-dialog)"/>
+                        <p:ajax event="rowUnselectCheckbox" update="@(.ui-button, .ui-confirm-dialog)"/>
+                        <p:ajax event="rowSelect" update="@(.ui-button, .ui-confirm-dialog)"/>
+                        <p:ajax event="rowUnselect" update="@(.ui-button, .ui-confirm-dialog)"/>
+                        <p:ajax event="toggleSelect" update="@(.ui-button, .ui-confirm-dialog)" />
+
+
+                        <f:facet name="header">
+                            Find Role : <p:inputText id="inptId"  value="#{roleListMB.entity.roleName}"/>
+                            <p:spacer height="5"/>
+                            <p:commandButton id="brFind"
+                                             value="Find"
+                                             action="#{roleListMB.findRole(roleListMB.entity.roleName)}"
+                                             process="@form"
+                                             update="@form"
+                                             styleClass="btn-flat bg-black btn-states"
+                                             partialSubmit="true"/>
+                        </f:facet>
+                        <p:column selectionMode="multiple" width="5%" styleClass="align-center" />
+
+                        <p:column headerText="Role" filterBy="#{c.roleName}" sortBy="#{c.roleName}"
+                                  filterMatchMode="contains">
+                            <f:facet name="filter">
+                                <p:autoComplete value="#{roleListMB.filter.entity.roleName}" forceSelection="true"
+                                                minQueryLength="2" queryDelay="500"
+                                                completeMethod="#{roleListMB.completeRole}" maxResults="10">
+                                    <p:ajax event="itemSelect" process="@this" update="@none"
+                                            oncomplete="PF('rolesTable').filter()"/>
+                                </p:autoComplete>
+                            </f:facet>
+                            <p:link value="#{c.roleName}" outcome="/manageRole_page/role_form" >
+                                <f:param name="id" value="#{c.id}"/>
+                            </p:link>
+
+                        </p:column>
+                        <p:column headerText="List Permission" sortBy="#{c.roleName}" filterBy="#{c.roleName}">
+                            
+                            <f:facet name="filter">
+                                <p:selectCheckboxMenu label="Permission" onchange="PF('rolesTable').filter()" >
+                                    <f:selectItems value="#{roleListMB.permisssion}"/>
+                                </p:selectCheckboxMenu>
+                            </f:facet>
+                            #{roleListMB.getPermisssionByRole(c.roleName)}
+                        </p:column>
+                        
+              </p:dataTable>
+                </div>
+            </div>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="box-danger box-solid">
+                <p:commandButton value="Yes" type="button" styleClass="btn-material btn-primary ui-confirmdialog-yes"
+                                 icon="fa fa-check"/>
+                <p:commandButton value="No" type="button" styleClass="btn-material btn-danger ui-confirmdialog-no"
+                                 icon="fa fa-close"/>
+            </p:confirmDialog>
+        </h:form>
+
+
+
+        <p:dialog header="Selected roles" widgetVar="selectedCars" height="250"
+                  width="400" responsive="true" styleClass="box-success">
+            <p:dataList id="selectedRolesList" value="#{roleListMB.selectedRoles}" var="role"
+                        type="definition">
+                ID: #{role.id} - Role: #{role.roleName} - Permission: #{roleListMB.getPermisssionByRole(c.roleName)}
+            </p:dataList>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

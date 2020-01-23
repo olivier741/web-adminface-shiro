@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ul class="sidebar-menu tree" data-widget="tree">
+        <li>
+            <p:link outcome="/index" onclick="clearBreadCrumbs()">
+                <i class="fa fa-home"></i>
+                <span>Home</span>
+            </p:link>
+        </li>
+        <li class="header">
+            General
+        </li>
+        <li>
+            <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/car_list.xhtml')) }" outcome="/car_list" >
+                <i class="fa fa-car"></i>
+                <span>Cars</span>
+            </p:link>
+        </li>
+         <li>
+             <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/managePermission_page/permission_list.xhtml')) }" outcome="/managePermission_page/permission_list" >
+                <i class="fa fa-car"></i>
+                <span>Permission</span>
+            </p:link>
+        </li>
+         <li>
+             <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/manageRole_page/role_list.xhtml')) }" outcome="/manageRole_page/role_list" >
+                <i class="fa fa-car"></i>
+                <span>Role</span>
+            </p:link>
+        </li>
+         <li>
+             <p:link rendered="#{logonMB.subject.hasRole(logonMB.getRoleByUserAndPermission(logonMB.currentUser,'/manageUser_page/user_list.xhtml')) }" outcome="/manageUser_page/user_list" >
+                <i class="fa fa-car"></i>
+                <span>Users</span>
+            </p:link>
+        </li>
+
+    </ul>
+
+</ui:composition>

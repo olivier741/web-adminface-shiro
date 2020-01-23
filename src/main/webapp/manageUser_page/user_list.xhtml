@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="#{layoutMB.template}">
+    
+    <ui:define name="metadata">
+        <ui:param name="title" value="User listing"/> <!-- Automatic create breadCrumb and page title when param 'title' is provided. --> 
+        
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            
+            .ui-widget-content .ui-datatable-even{
+                background: #ffffcc;
+            }
+
+            .ui-widget-content .ui-datatable-odd{
+                background: #ccffff;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="description">
+        Find user by Username
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs">
+                        <p:commandButton action="/manageUser_page/create_user?faces-redirect=true" icon="fa fa-plus"
+                                         value="New" styleClass="btn-primary"/>
+                        <p:spacer width="5"/>
+                        <p:commandButton value="Delete Selected" icon="fa fa-trash" styleClass="btn-danger"
+                                         action="#{userListMB.delete}"
+                                         disabled="#{empty userListMB.selectedUsers or userListMB.selectedUsers.size() == 0}"
+                                         process="@this" update="@form"
+                                         >
+                            <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-danger"/>
+                        </p:commandButton>
+                        <p:spacer width="5"/>
+                        <p:commandButton value="View selected" update="@(.ui-dialog)" styleClass="btn-info"
+                                         disabled="#{empty userListMB.selectedUsers or userListMB.selectedUsers.size() == 0}"
+                                         oncomplete="PF('selectedUsers').show()" icon="fa fa-search"/>
+                    </div>
+
+                    <p:splitButton value="New" action="/manageUser_page/create_user?faces-redirect=true"
+                                   icon="fa fa-plus"
+                                   styleClass="hidden-md hidden-lg btn-primary">
+                        <p:menuitem value="Delete Selected" action="#{userListMB.delete}"
+                                    process="@this" update="@form"
+                                    disabled="#{empty userListMB.selectedUsers or userListMB.selectedUsers.size() == 0}"
+                                    icon="fa fa-trash">
+                            <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-danger"/>
+                        </p:menuitem>
+                        <p:menuitem value="View selected" update="@(.ui-dialog)"
+                                    oncomplete="PF('selectedUsers').show()"
+                                    disabled="#{empty userListMB.selectedUsers or userListMB.selectedUsers.size() == 0}"
+                                    icon="fa fa-search"
+                                    />
+                    </p:splitButton>
+
+                    <p:separator/>
+                    <p:dataTable widgetVar="usersTable" var="c" value="#{userListMB.users}" rows="5"
+                                 rowKey="#{c.id}" lazy="true" paginator="true"
+                                 filteredValue="#{userListMB.filteredValue}"
+                                 paginatorPosition="bottom" selection="#{userListMB.selectedUsers}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {JumpToPageDropdown}"
+                                 currentPageReportTemplate="[ {startRecord} to {endRecord} of {totalRecords} ]"
+                                 rowsPerPageTemplate="5,10,15,20,30"
+                                 >
+
+                        <p:ajax event="rowSelectCheckbox" update="@(.ui-button, .ui-confirm-dialog)"/>
+                        <p:ajax event="rowUnselectCheckbox" update="@(.ui-button, .ui-confirm-dialog)"/>
+                        <p:ajax event="rowSelect" update="@(.ui-button, .ui-confirm-dialog)"/>
+                        <p:ajax event="rowUnselect" update="@(.ui-button, .ui-confirm-dialog)"/>
+                        <p:ajax event="toggleSelect" update="@(.ui-button, .ui-confirm-dialog)" />
+
+
+                        <f:facet name="header">
+                            Find User by Login: <p:inputText id="inptId"  value="#{userListMB.entity.username}"/>
+                            <p:spacer height="5"/>
+                            <p:commandButton id="brFind"
+                                             value="Find"
+                                             action="#{userListMB.findUserByUsername(userListMB.entity.username)}"
+                                             process="@form"
+                                             update="@form"
+                                             styleClass="btn-flat bg-black btn-states"
+                                             partialSubmit="true"/>
+                        </f:facet>
+                        <p:column selectionMode="multiple" width="5%" styleClass="align-center" />
+
+                        <p:column headerText="Login" filterBy="#{c.username}" sortBy="#{c.username}"
+                                  filterMatchMode="contains">
+                            <f:facet name="filter">
+                                <p:autoComplete value="#{userListMB.filter.entity.username}" forceSelection="true"
+                                                minQueryLength="2" queryDelay="500"
+                                                completeMethod="#{userListMB.completeUserName}" maxResults="10">
+                                    <p:ajax event="itemSelect" process="@this" update="@none" 
+                                            oncomplete="PF('usersTable').filter()"/>
+                                </p:autoComplete>
+                            </f:facet>
+                            <p:link value="#{c.username}" outcome="/manageUser_page/create_user" >
+                                <f:param name="id" value="#{c.id}"/>
+                            </p:link>
+
+                        </p:column>
+                        
+                        <p:column headerText="Lock" sortBy="#{c.islock}" filterBy="#{c.islock}">
+                            <f:facet name="filter">
+                                <p:inputSwitch value="#{userListMB.filter.entity.islock}">
+                                    <p:ajax process="@this" update="@none" oncomplete="PF('usersTable').filter()"/>
+                                </p:inputSwitch>
+                            </f:facet>
+                            #{c.islock}
+                        </p:column>
+                        
+                        <p:column headerText="Default Password" sortBy="#{c.isReset}" filterBy="#{c.isReset}">
+                            <f:facet name="filter">
+                                <p:inputSwitch value="#{userListMB.filter.entity.isReset}">
+                                    <p:ajax process="@this" update="@none" oncomplete="PF('usersTable').filter()"/>
+                                </p:inputSwitch>
+                            </f:facet>
+                            #{c.isReset}
+                        </p:column>
+                        
+                       <p:column headerText="List Role" sortBy="#{c.username}" filterBy="#{c.username}">
+                            
+                            <f:facet name="filter">
+                                <p:selectCheckboxMenu label="Role" onchange="PF('usersTable').filter()" >
+                                    <f:selectItems value="#{userListMB.role}"/>
+                                </p:selectCheckboxMenu>
+                            </f:facet>
+                            #{userListMB.getRoleByUser(c.username)}
+                        </p:column>
+                        
+                        <p:column headerText="Create Date" sortBy="#{c.create_date}" filterBy="#{c.create_date}">
+                            <f:facet name="filter">
+                                <p:calendar value="#{userListMB.filter.entity.create_date}" pattern="yyyy-MM-dd HH:mm:ss">
+                              
+                                </p:calendar>
+                            </f:facet>
+                            #{c.create_date}
+                        </p:column>
+                        
+                        
+                         
+                        <p:column headerText="Update Date" sortBy="#{c.last_update}" filterBy="#{c.last_update}">
+                            <f:facet name="filter">
+                                <p:calendar value="#{userListMB.filter.entity.last_update}" pattern="yyyy-MM-dd HH:mm:ss" >
+                                 
+                                </p:calendar>
+                            </f:facet>
+                            #{c.last_update}
+                        </p:column>
+                        
+                       
+                        
+                      
+              </p:dataTable>
+                </div>
+            </div>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="box-danger box-solid">
+                <p:commandButton value="Yes" type="button" styleClass="btn-material btn-primary ui-confirmdialog-yes"
+                                 icon="fa fa-check"/>
+                <p:commandButton value="No" type="button" styleClass="btn-material btn-danger ui-confirmdialog-no"
+                                 icon="fa fa-close"/>
+            </p:confirmDialog>
+        </h:form>
+
+
+
+        <p:dialog header="Selected users" widgetVar="selectedUsers" height="500"
+                  width="1000" responsive="true" styleClass="box-success">
+            <p:dataList id="selectedUsersList" value="#{userListMB.selectedUsers}" var="user" type="definition">
+                Login: #{user.username} - Islock: #{user.islock} - Default Password: #{user.isReset}- FirstName: #{user.firstname} - LastName: #{user.lastname} - CNI: #{user.CNI} - Age: #{user.age} - Sexe: #{user.sexe} - Email: #{user.email} - Phone: #{user.phone} - City: #{user.city} - Street: #{user.street} - PostalCode: #{user.postalCode} - Info: #{user.info} - Create Date : #{user.create_date} - Update Date : #{user.last_update}
+                <p:separator/>
+            </p:dataList>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,369 @@
+/* Menus */
+
+//general
+li.ui-menuitem  { 
+
+    a.ui-menuitem-link {
+
+        &:hover {
+            background: @hover-color;
+        }
+
+        span.ui-menuitem-icon {
+            top: 1px;
+            margin-right: 4px;
+        }
+
+        .ui-icon-triangle-1-s, .ui-icon-triangle-1-e {
+            background-image: none;
+            display: inline-block;
+            top: 2px;
+            text-indent: 0;
+        }
+
+        .ui-icon-triangle-1-s:before {
+            font-family: 'Glyphicons Halflings';
+            color: @admin-text-color;
+            position: relative;
+            left: 5px;
+            top: -2px;
+            font-size: @glyphicon-icon-size!important;
+            overflow: hidden;
+            content: "\e259" !important;
+        }
+
+        .ui-icon-triangle-1-e:before {
+            font-family: 'Glyphicons Halflings';
+            color: @admin-text-color;
+            position: relative;
+            top: -2px;
+            font-size: @glyphicon-icon-size!important;
+            overflow: hidden;
+            content: "\e258" !important;
+        }
+    }
+}
+
+li.ui-menuitem-active {
+    background-color: @hover-color;
+}
+
+body .ui-menu {
+
+    ul.ui-menu-list > li.ui-widget-header {
+        border: 0;
+        background: @light-blue;
+        color: #fff;
+
+        span.ui-icon:before {
+            color:#fff;
+        }
+    }
+
+    //icones 
+
+}
+
+li.ui-menuitem > a.ui-menuitem-link {
+    margin-left: 8px;
+}
+
+body li.ui-menuitem span.ui-menuitem-text {
+    padding-left: 2px;
+}
+
+/* menubar */
+div.ui-menu.ui-menubar {
+    padding: 0; 
+
+    li.ui-menuitem {
+        padding: .2em;
+    }
+}
+
+/* tabmenu */
+.ui-tabmenu {
+
+    li {
+        &.ui-state-active {
+            border: 1px solid darken(@light-blue, 5%);
+            background: @light-blue;
+            color: #FFFFFF;
+
+            .ui-menuitem-text {
+                color: #FFFFFF;
+            }
+
+            .ui-menuitem-icon:before {
+                color: #fff;
+            }
+
+        }
+
+        &.ui-state-hover {
+            background-color: @hover-color;
+        }
+
+        .ui-menuitem-icon {
+            display: inline-block;
+            margin: 3px;
+        }
+    }
+
+}
+
+
+
+.ui-tabmenu li.ui-state-active .ui-menuitem-icon {
+    background-image: url("#{resource['primefaces-admin:images/ui-icons_ffffff_256x240.png']}");
+}
+
+
+/* SlideMenu */
+
+.ui-slidemenu {
+
+    .ui-menu-child {
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        box-shadow: none !important;
+    }
+
+    .ui-slidemenu-backward {
+        margin-bottom: 0;
+        border: none;
+        color: transparent;
+        &:hover {
+            background: @hover-color;
+        }
+        .ui-icon-triangle-1-w {
+            background-image: none;
+            text-indent: 0;
+            &:before {
+                font-family: FontAwesome;
+                color: @admin-text-color;
+                position: relative;
+                font-size: @font-awesome-icon-size;
+                overflow: hidden;
+                content: "\f112" !important;
+            }
+        }
+
+    }
+
+}
+
+
+body .ui-menu .ui-menu-list li.ui-widget-header {
+    span.ui-icon-triangle-1-s {
+        background-image: none;
+        display: inline;
+        position: relative;
+        left: -8px;
+        &:before {
+            font-family: 'Glyphicons Halflings';
+            color: @admin-text-color;
+            position: relative;
+            font-size: @glyphicon-icon-size;
+            overflow: hidden;
+            content: "\e259" !important;
+        }
+    }
+    span.ui-icon-triangle-1-e {
+        background-image: none;
+        display: inline;
+        position: relative;
+        left: -8px;
+        &:before {
+            font-family: 'Glyphicons Halflings';
+            color: @admin-text-color;
+            position: relative;
+            font-size: @glyphicon-icon-size;
+            overflow: hidden;
+            content: "\e258" !important;
+        }
+    }
+}
+
+@media (max-width: @screen-sm) {
+    body .ui-menu .ui-menu-list li.ui-widget-header {
+        span {
+            &.ui-icon-triangle-1-s,
+            &.ui-icon-triangle-1-e {
+                &:before {
+                    font-size: @glyphicon-icon-size + 1;
+                }
+            }
+        }
+    }
+}
+
+span.ui-menuitem-icon.ui-icon.fa:before {
+    font-size: @font-awesome-icon-size;
+}
+
+@media (max-width: @screen-sm) {
+    span.ui-menuitem-icon.ui-icon.fa:before {
+        font-size: @font-awesome-icon-size + 1;
+    }
+}
+
+body .ui-menu.ui-menu-toggleable li.ui-widget-header h3 {
+    padding-left: 15px;
+}
+
+
+/* panelmenu */
+
+body .ui-panelmenu {
+
+    .ui-panelmenu-header {
+
+        &.ui-state-active, &.ui-state-active a {
+            background: @light-blue;
+            color: #ffffff;
+            border: 1px solid @light-blue;
+        }
+    }
+
+    li.ui-menuitem span.ui-menuitem-text {
+        padding-left: 0;
+    }
+    .ui-panelmenu-content {
+        position: initial;
+    }
+    div.ui-panelmenu-panel {
+        overflow: hidden;
+        > H3 {
+            padding: 2px 0;
+            .ui-icon-triangle-1-s {
+                background-image: none!important;
+                display: inline;
+                position: relative;
+                float: left;
+                text-indent: initial;
+                left: 10px;
+                top: 15px;
+                &:before {
+                    font-family: 'Glyphicons Halflings';
+                    color: #fff;
+                    position: relative;
+                    font-size: @glyphicon-icon-size;
+                    overflow: hidden;
+                    content: "\e259" !important;
+                }
+            }
+            .ui-icon-triangle-1-e {
+                background-image: none!important;
+                display: inline;
+                position: relative;
+                float: left;
+                text-indent: initial;
+                left: 10px;
+                top: 15px;
+                &:before {
+                    font-family: 'Glyphicons Halflings';
+                    color: @admin-text-color;
+                    position: relative;
+                    font-size: @glyphicon-icon-size;
+                    overflow: hidden;
+                    content: "\e258" !important;
+                }
+            }
+        }
+
+    }//end header
+
+    a.ui-menuitem-link-hasicon span.ui-panelmenu-icon.ui-icon:before {
+        left:-25px!important;
+    }
+
+    .ui-menu-parent > .ui-menuitem-link {
+        > .ui-icon {
+            top: 5px;
+        }
+        &.ui-menuitem-link-hasicon {
+            padding-left: 2.5em;
+        }
+
+        span.ui-panelmenu-icon.ui-icon {
+            left: -4px;
+            &.ui-icon-triangle-1-e {
+                background-image: none;
+                display: inline;
+                position: relative;
+                &:before {
+                    font-family: 'Glyphicons Halflings';
+                    color: @admin-text-color;
+                    position: relative;
+                    left: -4px;
+                    top: -4px;
+                    font-size: @glyphicon-icon-size;
+                    overflow: hidden;
+                    content: "\e258" !important;
+                }
+            }
+            &.ui-icon-triangle-1-s {
+                background-image: none;
+                display: inline;
+                position: relative;
+                &:before {
+                    font-family: 'Glyphicons Halflings';
+                    color: @admin-text-color;
+                    position: relative;
+                    left: -5px;
+                    top: -4px;
+                    font-size: @glyphicon-icon-size;
+                    overflow: hidden;
+                    content: "\e259" !important;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: @screen-sm) {
+    body .ui-panelmenu span.ui-panelmenu-icon.ui-icon,
+    body .ui-panelmenu div.ui-panelmenu-panel > H3 span {
+        &.ui-icon-triangle-1-e,
+        &.ui-icon-triangle-1-s {
+            &:before {
+                font-size: @glyphicon-icon-size + 1;
+            }
+        }
+    }
+}
+
+//make menu icons 'fat' on wider screens
+@media (min-width: (@screen-md + 1)) {
+    h3.ui-panelmenu-header, span.ui-menuitem-icon, li.ui-menuitem, .ui-menu-list, .ui-tree-toggler {
+        .ui-icon-triangle-1-e,
+        .ui-icon-triangle-1-s {
+            &:before {
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+@media (max-width: (@screen-sm - 1)) {
+    .slideout-menu {
+        position: absolute;
+        display: none;
+        top: 0;
+        left: 0;
+        min-height: 100%;
+        width: 230px;
+    }
+    .slideout-menu-left {
+        left: 0;
+    }
+    .slideout-panel {
+        min-height: 100%;
+        background-color: #ecf0f5;
+        z-index: 811;
+        position: relative;
+        padding: 0;
+        will-change: transform;
+    }
+}

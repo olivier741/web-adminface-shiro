@@ -1,0 +1,396 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="#{layoutMB.template}">
+    
+      <f:metadata>
+            <f:viewParam  name="id" value="#{userFormMB.id}" converter="javax.faces.Long"/>
+            <!-- use view action if you are in a Java EE 7 server: <f:viewAction action="#{userFormMB.init()}"/>-->
+            <f:event type="preRenderView" listener="#{userFormMB.init}"/>
+        </f:metadata>
+
+    <ui:define name="title">
+        Wizard
+        
+         
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            
+            .ui-widget-content .ui-datatable-even{
+                background: #ffffcc;
+            }
+
+            .ui-widget-content .ui-datatable-odd{
+                background: #ccffff;
+            }
+        </style>
+    </ui:define>
+
+
+    <ui:define name="description">
+        Wizard creates a workflow by creating multiple steps out of a single page form.
+
+        Only current step is processed partially and next step is displayed if current step passes validations.
+
+        Wizard flow is sequential by default and this can be managed using the optional ajax flowListeners, simply outcome of a flowListener defines the next step to display.
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="#{empty userFormMB.id ? 'New User' : 'User '.concat(userFormMB.id)}" link="/manageUser_page/create_user.xhtml?id=#{userFormMB.id}"/>
+       
+        <p:panel styleClass="card box-info">
+            <h:form prependId="false">
+                <p:focus rendered="#{empty userFormMB.id}"/>
+                
+                 <div id="main-buttons" class="hidden-sm hidden-xs">
+                        <p:commandButton value="Save" action="#{userFormMB.save}" update="@form"
+                                         icon="fa fa-check" styleClass="btn-primary"/>
+                        <p:spacer width="5" rendered="#{userFormMB.isNew()}"/>
+                        <p:commandButton value="Clear" action="#{userFormMB.clear}" process="@this"
+                                         icon="fa fa-refresh" styleClass="btn-success"
+                                         update="@form" rendered="#{userFormMB.isNew()}" resetValues="true"/>
+                        <p:spacer width="5" rendered="#{not userFormMB.isNew()}"/>
+
+                        <p:commandButton value="Delete" action="#{userFormMB.remove}" process="@this"
+                                         rendered="#{not userFormMB.isNew()}" icon="fa fa-trash"
+                                         styleClass="btn-danger">
+                            <f:setPropertyActionListener value="true" target="#{facesContext.externalContext.flash.keepMessages}"/>
+                            <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-danger"/>
+                        </p:commandButton>
+                        <p:spacer width="5"/>
+                        <p:commandButton value="Back" immediate="true"
+                                         action="/manageUser_page/user_list?faces-redirect=true"
+                                         process="@this"
+                                         icon="fa fa-reply"/>
+                    </div>
+                    
+                    <p:splitButton value="Save" action="#{userFormMB.save}" update="@form"
+                                   icon="fa fa-check"
+                                   styleClass="hidden-md hidden-lg btn-primary">
+                        <p:menuitem value="Reset" action="#{userFormMB.clear}"
+                                    process="@this" update="@form" rendered="#{userFormMB.isNew()}"
+                                    resetValues="true" icon="fa fa-refresh"/>
+                        <p:menuitem value="Delete" action="#{userFormMB.remove}" process="@this"
+                                    rendered="#{not userFormMB.isNew()}" icon="fa fa-trash" >
+                            <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-danger"/>
+                        </p:menuitem>
+                        <p:separator/>
+                        <p:menuitem value="Back" action="/manageUser_page/user_list?faces-redirect=true"
+                                    process="@this" immediate="true"
+                                    icon="fa fa-reply"/>
+                    </p:splitButton>
+
+                
+                <p:separator/>
+                
+                <p:wizard flowListener="#{userFormMB.onFlowProcess}">
+                     <p:tab id="login" title="Login">
+                        <p:panel header="Login Details">
+                            <p:messages closable="true"/>
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-4"
+                                         layout="grid" styleClass="ui-fluid">
+                                <p:outputLabel value="Login: *" for="username"/>
+                                <p:inputText id="username" value="#{userFormMB.user.username}"
+                                             requiredMessage="Firstname is required"
+                                             required="true" label="Login"/>
+
+                                <p:outputLabel value="Role *" for="role"/>
+                                <p:selectCheckboxMenu id="role" label="Role" value="#{userFormMB.selectedRole}" multiple="true" filter="true" filterMatchMode="contains"
+                                  requiredMessage="Role is required" required="true"  converter="roleConverter" >
+                                    <f:selectItems value="#{userFormMB.listrole}" var="rol" itemLabel="#{rol.roleName}" itemValue="#{rol}"/>
+                              </p:selectCheckboxMenu>
+                                                              
+                                <p:outputLabel value="UNCLOCK/CLOCK ACCOUNT " for="lock"/>
+                                <p:inputSwitch value="#{userFormMB.user.islock}" id="lock" widgetVar="materialSwitch1">
+                                </p:inputSwitch>
+                                
+                                
+                                <p:spacer height="5" rendered="#{not userFormMB.isNew()}"/>
+                                 
+                                <p:outputLabel value="RESET PASSWORD " for="reset" rendered="#{not userFormMB.isNew()}" />
+                                <p:inputSwitch value="#{userFormMB.user.isReset}" id="reset" widgetVar="materialSwitch2" rendered="#{not userFormMB.isNew()}" >
+                                </p:inputSwitch>
+
+                            </p:panelGrid>
+                        </p:panel>
+                    </p:tab>
+                    <p:tab id="personal" title="Personal">
+                        <p:panel header="Personal Details">
+                            <p:messages closable="true"/>
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-4"
+                                         layout="grid" styleClass="ui-fluid">
+                               
+                                <p:outputLabel value="Firstname: *" for="firstname"/>
+                                <p:inputText id="firstname" value="#{userFormMB.user.firstname}"
+                                             requiredMessage="Firstname is required"
+                                             required="true" label="Firstname"/>
+
+                                <p:outputLabel value="Lastname: *" for="lastname"/>
+                                <p:inputText id="lastname" value="#{userFormMB.user.lastname}"
+                                             requiredMessage="Lastname is required"
+                                             required="true" label="Lastname"/>
+                                
+                                 <p:outputLabel value="CNI: " for="cni"/>
+                                 <p:inputText id="cni" value="#{userFormMB.user.CNI}"  label="CNI"/>
+                                 
+                                 <p:outputLabel value="SEXE: " for="sex"/>
+                                  <p:selectOneMenu id="sex"  value="#{userFormMB.user.sexe}" label="SEXE" filter="true" filterMatchMode="contains">
+                                         <f:selectItem itemValue="Femele" itemLabel="Femele"/>
+                                         <f:selectItem itemValue="Male" itemLabel="Male"/>
+                                  </p:selectOneMenu>
+                                
+                                <p:outputLabel for="age" value="Age: "/>
+                                <p:inputText id="age" value="#{userFormMB.user.age}"/>
+
+                            </p:panelGrid>
+                        </p:panel>
+                    </p:tab>
+
+                    <p:tab id="address" title="Address">
+                        <p:panel header="Address Details">
+                            <p:messages closable="true"/>
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-4"
+                                         layout="grid" styleClass="ui-fluid">
+                                <h:outputText value="Street: "/>
+                                <p:inputText value="#{userFormMB.user.street}"/>
+
+                                <h:outputText value="Postal Code: "/>
+                                <p:inputText value="#{userFormMB.user.postalCode}"/>
+
+                                <h:outputText value="City: "/>
+                                <p:inputText value="#{userFormMB.user.city}"/>
+
+                            </p:panelGrid>
+                        </p:panel>
+                    </p:tab>
+
+                    <p:tab id="contact" title="Contact">
+                        <p:panel header="Contact Information">
+                            <p:messages closable="true"/>
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-4"
+                                         layout="grid" styleClass="ui-fluid">
+                                
+                                <h:outputText value="Email: *"/>
+                                
+                                <p:dataTable id="tab_email1" widgetVar="tab_email1" var="mail" value="#{userFormMB.listEmail}" 
+                                             editable="true" editMode="cell" selectionMode="single" rowKey="#{mail.email}"
+                                             selection="#{userFormMB.selectedEmail}"
+                                             scrollable="true" scrollHeight="150" styleClass="datatable" 
+                                             resizableColumns="true" style="margin-bottom:20px">
+                                  
+                                    <p:ajax event="cellEdit" listener="#{userFormMB.onCellEdit}" update="tab_email1" />
+
+                                    
+                                    <p:column headerText="Email">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{mail.email}" /></f:facet>
+                                            <f:facet name="input"><p:inputText id="modelInput" value="#{mail.email}" style="width:100%"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+
+                                    
+                                </p:dataTable>
+                                
+                                 <p:contextMenu for="tab_email1" widgetVar="cMenu">   
+                                    <p:menuitem value="Edit Cell" icon="pi pi-search" update="tab_email1" onclick="PF('tab_email1').showCellEditor();return false;"/>  
+                                    <p:menuitem value="Delete" update="tab_email1" icon="pi pi-times" action="#{userFormMB.deleteEmail()}"/>
+                                    <p:menuitem value="Hide Menu" icon="pi pi-times"  update="tab_email1" onclick="PF('cMenu').hide()"/>  
+                                </p:contextMenu> 
+
+                                <p:commandButton value="Add new row"  icon="fa fa-check" styleClass="ui-priority-primary" process="@this" update="tab_email1"
+                                                          action="#{userFormMB.onAddNewEmail()}" />
+
+
+                                <h:outputText value="Phone: "/>
+                                <p:inputText value="#{userFormMB.user.listphone_number}"/>
+
+                                <h:outputText value="Additional Info: "/>
+                                <p:inputText value="#{userFormMB.user.info}"/>
+                            </p:panelGrid>
+                        </p:panel>
+                    </p:tab>
+
+                    <p:tab id="confirm" title="Confirmation">
+                        <p:panel header="Confirmation" styleClass="box-primary">
+
+                            <div class="ui-g ui-fluid">
+                                <div class="ui-g-12">
+
+                                    <div class="ui-g-3">
+                                        
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Login "/>
+                                        </div>
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.username}"/>
+                                        </div>
+                                        
+                                        
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Role "/>
+                                        </div>
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.displaySelectedRole}"/>
+                                        </div>
+                                        
+                                        
+                                         <div class="ui-g-12">
+                                            <p:outputLabel value="Locked "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.islock}"/>
+                                        </div>
+                                        
+                                        
+                                         <div class="ui-g-12">
+                                            <p:outputLabel value="Default Password "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.isReset}"/>
+                                        </div>
+                                      
+                                    </div>
+                                    
+                                     <div class="ui-g-3">
+                                      
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="CNI "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.CNI}"/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Firstname "/>
+                                        </div>
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.firstname}"/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Lastname "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.lastname}"/>
+                                        </div>
+                                        
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Sexe "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.sexe}"/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Age "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.age}"/>
+                                        </div>
+                                         
+                                   </div>    
+
+                                    <div class="ui-g-3">
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Street "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.street}" styleClass="outputLabel"/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Postal "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.postalCode}"
+                                                          styleClass="outputLabel"/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="City "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.city}" styleClass="outputLabel"/>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="ui-g-3">
+
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Email "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.email}" styleClass="outputLabel"/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Phone "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.phone}" styleClass="outputLabel"/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <p:outputLabel value="Info "/>
+                                        </div>
+
+                                        <div class="ui-g-12">
+                                            <h:outputText value="#{userFormMB.user.info}" styleClass="outputLabel"/>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <p:commandButton value="Submit" actionListener="#{userFormMB.save}" styleClass="btn-teal" icon="fa fa-check"
+                                             process="@this"/>
+                        </p:panel>
+                    </p:tab>
+                    
+                </p:wizard>
+
+            </h:form>
+        </p:panel>
+    </ui:define>
+
+    <ui:define name="code">
+        <p:tabView>
+            <p:tab title="/manageUser_page/create_user.xhtml">
+           <pre>
+               <code class="language-html">
+                   <h:outputText value="#{sourceCodeMB.getPageSource()}" escape="true"/>
+               </code>
+           </pre>
+            </p:tab>
+
+            <p:tab title="UserWizardMB.java">
+              <pre>
+               <code class="language-java">
+                   <h:outputText
+                           value="#{sourceCodeMB.getJavaSource('com.github.adminfaces.starter.bean.UserWizardMB')}"
+                           escape="false"/>
+               </code>
+             </pre>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+</ui:composition>
