@@ -11,7 +11,7 @@
 
     <properties>
          <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-         <shiro.version>1.2.6</shiro.version>
+         <shiro.version>1.8.0</shiro.version>
          <version.hibernate>5.2.16.Final</version.hibernate>
     </properties>
 
