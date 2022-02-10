@@ -44,7 +44,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.deltaspike>1.8.0</version.deltaspike>
         <shiro.version>1.2.6</shiro.version>
-        <version.hibernate>5.2.16.Final</version.hibernate>
+        <version.hibernate>5.4.24.Final</version.hibernate>
     </properties>
 
     <dependencies>
